@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Data Mahasiswa</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Arial, sans-serif; background: #f3f6fb;
+      color: #1f2937; padding: 24px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    header { background: #244dc7; color: white; padding: 24px; border-radius: 16px; margin-bottom: 20px; }
+    header h1 { margin: 0 0 8px; }
+    .card { background: white; padding: 22px; border-radius: 14px; box-shadow: 0 4px 16px #14213d12; margin-bottom: 20px; }
+    form { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 12px; align-items: end; }
+    label { display: block; font-size: 14px; margin-bottom: 6px; font-weight: bold; }
+    input { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+    button { padding: 11px 15px; border: 0; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .add { background: #244dc7; color: white; }
+    .delete { background: #fee2e2; color: #991b1b; padding: 7px 10px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 500px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e5e7eb; }
+    th { background: #f8fafc; }
+    .empty { color: #64748b; text-align: center; padding: 22px; }
+    .count { color: #64748b; font-size: 14px; }
+    @media (max-width: 700px) {
+      body { padding: 14px; }
+      form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>🎓 Aplikasi Data Mahasiswa</h1>
+      <p>Contoh proyek sederhana untuk tugas GitHub.</p>
+    </header>
+
+    <section class="card">
+      <h2>Tambah Mahasiswa</h2>
+      <form id="studentForm">
+        <div>
+          <label for="nim">NIM</label>
+          <input id="nim" required placeholder="Contoh: 231001">
+        </div>
+        <div>
+          <label for="nama">Nama</label>
+          <input id="nama" required placeholder="Nama mahasiswa">
+        </div>
+        <div>
+          <label for="prodi">Program Studi</label>
+          <input id="prodi" required placeholder="Contoh: Informatika">
+        </div>
+        <button class="add" type="submit">Tambah</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Daftar Mahasiswa</h2>
+      <p class="count" id="count">Jumlah mahasiswa: 0</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>No.</th><th>NIM</th><th>Nama</th><th>Program Studi</th><th>Aksi</th></tr></thead>
+          <tbody id="studentList"></tbody>
+        </table>
+      </div>
+      <p class="empty" id="empty">Belum ada data. Tambahkan mahasiswa melalui formulir di atas.</p>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('studentForm');
+    const list = document.getElementById('studentList');
+    const empty = document.getElementById('empty');
+    const count = document.getElementById('count');
+    let students = [];
+
+    function renderStudents() {
+      list.replaceChildren();
+      students.forEach((student, index) => {
+        const row = document.createElement('tr');
+        [String(index + 1), student.nim, student.nama, student.prodi].forEach(value => {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+        const actionCell = document.createElement('td');
+        const button = document.createElement('button');
+        button.textContent = 'Hapus';
+        button.className = 'delete';
+        button.type = 'button';
+        button.addEventListener('click', () => {
+          students.splice(index, 1);
+          renderStudents();
+        });
+        actionCell.appendChild(button);
+        row.appendChild(actionCell);
+        list.appendChild(row);
+      });
+      empty.hidden = students.length > 0;
+      count.textContent = `Jumlah mahasiswa: ${students.length}`;
+    }
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const nim = document.getElementById('nim').value.trim();
+      const nama = document.getElementById('nama').value.trim();
+      const prodi = document.getElementById('prodi').value.trim();
+      if (students.some(student => student.nim === nim)) {
+        alert('NIM sudah terdaftar. Gunakan NIM lain.');
+        return;
+      }
+      students.push({ nim, nama, prodi });
+      form.reset();
+      renderStudents();
+    });
+    renderStudents();
+  </script>
+</body>
+</html>
